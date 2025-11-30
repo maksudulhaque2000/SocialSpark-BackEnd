@@ -14,9 +14,14 @@ export const updateUserValidation = [
     .withMessage('Bio cannot exceed 500 characters'),
   
   body('interests')
-    .optional()
-    .isArray()
-    .withMessage('Interests must be an array'),
+    .optional({ checkFalsy: true })
+    .custom((value) => {
+      // Allow single value or array
+      if (typeof value === 'string' || Array.isArray(value)) {
+        return true;
+      }
+      throw new Error('Interests must be a string or array');
+    }),
   
   body('interests.*')
     .optional()

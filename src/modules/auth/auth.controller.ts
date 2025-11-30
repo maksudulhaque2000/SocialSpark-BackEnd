@@ -38,6 +38,12 @@ export const register = async (req: AuthRequest, res: Response): Promise<void> =
         email: user.email,
         role: user.role,
         profileImage: user.profileImage,
+        bio: user.bio,
+        interests: user.interests,
+        isVerified: user.isVerified,
+        isActive: user.isActive,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
       },
       token,
     });
@@ -92,6 +98,10 @@ export const login = async (req: AuthRequest, res: Response): Promise<void> => {
         profileImage: user.profileImage,
         bio: user.bio,
         interests: user.interests,
+        isVerified: user.isVerified,
+        isActive: user.isActive,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
       },
       token,
     });
@@ -135,20 +145,24 @@ export const socialLogin = async (req: AuthRequest, res: Response): Promise<void
 
     // Generate JWT token
     const token = generateToken({
-      id: user._id,
+      id: user._id.toString(),
       email: user.email,
       role: user.role,
     });
 
     sendSuccess(res, 200, 'Social login successful', {
       user: {
-        id: user._id,
+        id: user._id.toString(),
         name: user.name,
         email: user.email,
         role: user.role,
         profileImage: user.profileImage,
         bio: user.bio,
         interests: user.interests,
+        isVerified: user.isVerified,
+        isActive: user.isActive,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
       },
       token,
     });
@@ -172,7 +186,21 @@ export const getCurrentUser = async (req: AuthRequest, res: Response): Promise<v
       return;
     }
 
-    sendSuccess(res, 200, 'User retrieved successfully', { user });
+    sendSuccess(res, 200, 'User retrieved successfully', {
+      user: {
+        id: user._id.toString(),
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        profileImage: user.profileImage,
+        bio: user.bio,
+        interests: user.interests,
+        isVerified: user.isVerified,
+        isActive: user.isActive,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
+    });
   } catch (error: unknown) {
     console.error('Get current user error:', error);
     sendError(res, 500, 'Failed to get user');

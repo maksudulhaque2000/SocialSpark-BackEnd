@@ -16,7 +16,21 @@ export const getUserById = async (req: AuthRequest, res: Response): Promise<void
       return;
     }
 
-    sendSuccess(res, 200, 'User retrieved successfully', { user });
+    sendSuccess(res, 200, 'User retrieved successfully', {
+      user: {
+        id: user._id.toString(),
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        profileImage: user.profileImage,
+        bio: user.bio,
+        interests: user.interests,
+        isVerified: user.isVerified,
+        isActive: user.isActive,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
+    });
   } catch (error: unknown) {
     console.error('Get user error:', error);
     sendError(res, 500, 'Failed to get user');
@@ -28,8 +42,19 @@ export const updateUser = async (req: AuthRequest, res: Response): Promise<void>
   try {
     const { id } = req.params;
 
+    // Debug logging
+    console.log('Update user request:', {
+      requestUserId: req.user?.id,
+      requestUserIdType: typeof req.user?.id,
+      paramsId: id,
+      paramsIdType: typeof id,
+      userRole: req.user?.role,
+      comparison: req.user?.id.toString() === id.toString(),
+    });
+
     // Check if user is updating their own profile or is admin
-    if (req.user?.id !== id && req.user?.role !== 'Admin') {
+    // Convert both IDs to strings for proper comparison
+    if (req.user?.id.toString() !== id.toString() && req.user?.role !== 'Admin') {
       sendError(res, 403, 'You can only update your own profile');
       return;
     }
@@ -39,7 +64,22 @@ export const updateUser = async (req: AuthRequest, res: Response): Promise<void>
 
     if (name) updateData.name = name;
     if (bio !== undefined) updateData.bio = bio;
-    if (interests) updateData.interests = interests;
+    
+    // Handle interests - convert to array if it's a single value or parse JSON
+    if (interests !== undefined) {
+      if (Array.isArray(interests)) {
+        updateData.interests = interests;
+      } else if (typeof interests === 'string') {
+        try {
+          // Try to parse as JSON (for empty array case)
+          const parsed = JSON.parse(interests);
+          updateData.interests = Array.isArray(parsed) ? parsed : [interests];
+        } catch {
+          // If not JSON, treat as single interest
+          updateData.interests = [interests];
+        }
+      }
+    }
 
     // Handle profile image upload
     if (req.file) {
@@ -57,7 +97,21 @@ export const updateUser = async (req: AuthRequest, res: Response): Promise<void>
       return;
     }
 
-    sendSuccess(res, 200, 'Profile updated successfully', { user });
+    sendSuccess(res, 200, 'Profile updated successfully', {
+      user: {
+        id: user._id.toString(),
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        profileImage: user.profileImage,
+        bio: user.bio,
+        interests: user.interests,
+        isVerified: user.isVerified,
+        isActive: user.isActive,
+        createdAt: user.createdAt,
+        updatedAt: user.updatedAt,
+      },
+    });
   } catch (error: unknown) {
     console.error('Update user error:', error);
     sendError(res, 500, 'Failed to update profile');
