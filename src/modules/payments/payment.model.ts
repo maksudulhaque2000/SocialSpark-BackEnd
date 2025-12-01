@@ -21,7 +21,6 @@ const paymentSchema = new Schema<IPayment>(
     stripePaymentId: {
       type: String,
       required: true,
-      unique: true,
     },
     status: {
       type: String,
@@ -36,7 +35,7 @@ const paymentSchema = new Schema<IPayment>(
 
 // Index for quick lookups
 paymentSchema.index({ userId: 1, eventId: 1 });
-paymentSchema.index({ stripePaymentId: 1 });
+paymentSchema.index({ stripePaymentId: 1 }, { unique: true });
 
 const Payment: Model<IPayment> = mongoose.model<IPayment>('Payment', paymentSchema);
 

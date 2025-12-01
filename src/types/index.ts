@@ -71,6 +71,19 @@ export interface IPayment {
   createdAt: Date;
 }
 
+export interface IWebsiteReview {
+  _id: string;
+  userId: string;
+  name: string;
+  email: string;
+  rating: number;
+  comment: string;
+  status: 'pending' | 'approved' | 'rejected';
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export type UserRole = 'User' | 'Host' | 'Admin';
 export type EventStatus = 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
 export type PaymentStatus = 'pending' | 'completed' | 'failed';
+export type ReviewStatus = 'pending' | 'approved' | 'rejected';

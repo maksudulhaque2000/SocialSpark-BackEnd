@@ -2,6 +2,7 @@ import { Response } from 'express';
 import { AuthRequest } from '../../types';
 import User from '../users/user.model';
 import Event from '../events/event.model';
+import WebsiteReview from '../website-reviews/website-review.model';
 import { sendSuccess, sendError } from '../../utils/response.util';
 import { getPaginationParams, getPaginationResult } from '../../utils/pagination.util';
 
@@ -343,6 +344,7 @@ export const getDashboardStats = async (req: AuthRequest, res: Response): Promis
     const totalEvents = await Event.countDocuments();
     const activeUsers = await User.countDocuments({ isActive: true });
     const blockedUsers = await User.countDocuments({ isActive: false });
+    const pendingReviews = await WebsiteReview.countDocuments({ status: 'pending' });
 
     // Event statistics
     const upcomingEvents = await Event.countDocuments({ status: 'upcoming', isApproved: true });
@@ -391,6 +393,9 @@ export const getDashboardStats = async (req: AuthRequest, res: Response): Promis
         completed: completedEvents,
         pendingApproval,
         newThisMonth: newEventsThisMonth,
+      },
+      reviews: {
+        pendingReviews,
       },
       categoryDistribution: eventsByCategory,
       recentUsers,
