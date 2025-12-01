@@ -396,3 +396,76 @@ export const updateEventStatus = async (req: AuthRequest, res: Response): Promis
     sendError(res, 500, 'Failed to update event status');
   }
 };
+
+// Get event participants (for host/admin)
+export const getEventParticipants = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    const event = await Event.findById(id).populate(
+      'participants',
+      'name email profileImage bio interests createdAt'
+    );
+
+    if (!event) {
+      sendError(res, 404, 'Event not found');
+      return;
+    }
+
+    // Check if user is the host or admin
+    if (event.hostId.toString() !== req.user?.id && req.user?.role !== 'Admin') {
+      sendError(res, 403, 'You can only view participants of your own events');
+      return;
+    }
+
+    sendSuccess(res, 200, 'Participants retrieved successfully', {
+      participants: event.participants,
+      totalParticipants: event.currentParticipants,
+    });
+  } catch (error: unknown) {
+    console.error('Get event participants error:', error);
+    sendError(res, 500, 'Failed to get event participants');
+  }
+};
+
+// Get event revenue (for host/admin)
+export const getEventRevenue = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    const event = await Event.findById(id);
+    if (!event) {
+      sendError(res, 404, 'Event not found');
+      return;
+    }
+
+    // Check if user is the host or admin
+    if (event.hostId.toString() !== req.user?.id && req.user?.role !== 'Admin') {
+      sendError(res, 403, 'You can only view revenue of your own events');
+      return;
+    }
+
+    // Import Payment model
+    const Payment = (await import('../payments/payment.model')).default;
+
+    // Get all completed payments for this event
+    const payments = await Payment.find({
+      eventId: id,
+      status: 'completed',
+    }).populate('userId', 'name email profileImage');
+
+    // Calculate total revenue
+    const totalRevenue = payments.reduce((sum, payment) => sum + payment.amount, 0);
+
+    sendSuccess(res, 200, 'Event revenue retrieved successfully', {
+      eventId: id,
+      eventTitle: event.title,
+      totalRevenue,
+      totalPayments: payments.length,
+      payments,
+    });
+  } catch (error: unknown) {
+    console.error('Get event revenue error:', error);
+    sendError(res, 500, 'Failed to get event revenue');
+  }
+};

@@ -9,6 +9,8 @@ import {
   leaveEvent,
   getCategories,
   updateEventStatus,
+  getEventParticipants,
+  getEventRevenue,
 } from './event.controller';
 import { createEventValidation, updateEventValidation } from './event.validation';
 import { validate } from '../../middlewares/validation.middleware';
@@ -46,6 +48,12 @@ router.delete('/:id', authenticate, deleteEvent);
 
 // Update event status (host/admin only)
 router.patch('/:id/status', authenticate, updateEventStatus);
+
+// Get event participants (host/admin only)
+router.get('/:id/participants', authenticate, getEventParticipants);
+
+// Get event revenue (host/admin only)
+router.get('/:id/revenue', authenticate, getEventRevenue);
 
 // Protected routes - All authenticated users
 router.post('/:id/join', authenticate, joinEvent);
