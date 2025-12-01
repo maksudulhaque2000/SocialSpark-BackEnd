@@ -45,6 +45,7 @@ import adminRoutes from './modules/admin/admin.routes';
 import commentRoutes from './modules/comments/comment.routes';
 import statsRoutes from './modules/stats/stats.routes';
 import websiteReviewRoutes from './modules/website-reviews/website-review.routes';
+import subscriptionRoutes from './modules/subscriptions/subscription.routes';
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -56,6 +57,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/comments', commentRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/website-reviews', websiteReviewRoutes);
+app.use('/api/subscriptions', subscriptionRoutes);
 
 // Error handling
 app.use(notFound);

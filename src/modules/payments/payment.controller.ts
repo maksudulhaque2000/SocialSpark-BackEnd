@@ -3,6 +3,7 @@ import { AuthRequest } from '../../types';
 import stripe from '../../config/stripe';
 import Payment from './payment.model';
 import Event from '../events/event.model';
+import { UserSubscription } from '../subscriptions/subscription.model';
 import { sendSuccess, sendError } from '../../utils/response.util';
 
 // Create payment intent
@@ -33,14 +34,34 @@ export const createPaymentIntent = async (req: AuthRequest, res: Response): Prom
       return;
     }
 
+    // Check for active subscription and apply discount
+    let finalPrice = event.price;
+    let discountPercentage = 0;
+    
+    const activeSubscription = await UserSubscription.findOne({
+      userId: req.user!.id,
+      status: 'active',
+      endDate: { $gte: new Date() },
+    }).populate('planId');
+
+    if (activeSubscription && activeSubscription.planId) {
+      discountPercentage = (activeSubscription.planId as any).discountPercentage || 0;
+      if (discountPercentage > 0) {
+        finalPrice = event.price * (1 - discountPercentage / 100);
+      }
+    }
+
     // Create payment intent
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: Math.round(event.price * 100), // Convert to cents
+      amount: Math.round(finalPrice * 100), // Convert to cents
       currency: 'usd',
       metadata: {
         eventId: event._id.toString(),
         userId: req.user!.id,
         eventTitle: event.title,
+        originalPrice: event.price.toString(),
+        discountPercentage: discountPercentage.toString(),
+        finalPrice: finalPrice.toString(),
       },
     });
 
@@ -48,7 +69,7 @@ export const createPaymentIntent = async (req: AuthRequest, res: Response): Prom
     await Payment.create({
       userId: req.user!.id,
       eventId: event._id,
-      amount: event.price,
+      amount: finalPrice,
       stripePaymentId: paymentIntent.id,
       status: 'pending',
     });
@@ -56,6 +77,9 @@ export const createPaymentIntent = async (req: AuthRequest, res: Response): Prom
     sendSuccess(res, 200, 'Payment intent created', {
       clientSecret: paymentIntent.client_secret,
       paymentIntentId: paymentIntent.id,
+      originalPrice: event.price,
+      discountPercentage,
+      finalPrice,
     });
   } catch (error: unknown) {
     console.error('Create payment intent error:', error);

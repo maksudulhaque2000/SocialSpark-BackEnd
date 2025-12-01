@@ -3,6 +3,7 @@ import { AuthRequest } from '../../types';
 import User from '../users/user.model';
 import { generateToken } from '../../utils/jwt.util';
 import { sendSuccess, sendError } from '../../utils/response.util';
+import { assignFreePlanToUser } from '../subscriptions/subscription.controller';
 
 // Register new user
 export const register = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -22,6 +23,11 @@ export const register = async (req: AuthRequest, res: Response): Promise<void> =
       email,
       password,
       role: role || 'User',
+    });
+
+    // Assign free plan to new user (async, don't wait)
+    assignFreePlanToUser(user._id.toString()).catch((error) => {
+      console.error('Error assigning free plan to new user:', error);
     });
 
     // Generate JWT token
