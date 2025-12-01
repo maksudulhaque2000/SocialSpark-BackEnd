@@ -31,6 +31,20 @@ const reviewSchema = new Schema<IReview>(
       maxlength: [500, 'Comment cannot exceed 500 characters'],
       trim: true,
     },
+    reactions: [
+      {
+        userId: {
+          type: Schema.Types.ObjectId,
+          ref: 'User',
+          required: true,
+        },
+        type: {
+          type: String,
+          enum: ['like', 'love', 'helpful', 'insightful'],
+          required: true,
+        },
+      },
+    ],
   },
   {
     timestamps: true,

@@ -5,6 +5,8 @@ import {
   getEventReviews,
   updateReview,
   deleteReview,
+  addReviewReaction,
+  removeReviewReaction,
 } from './review.controller';
 import { createReviewValidation, updateReviewValidation } from './review.validation';
 import { validate } from '../../middlewares/validation.middleware';
@@ -20,5 +22,9 @@ router.get('/event/:eventId', getEventReviews);
 router.post('/', authenticate, createReviewValidation, validate, createReview);
 router.patch('/:id', authenticate, updateReviewValidation, validate, updateReview);
 router.delete('/:id', authenticate, deleteReview);
+
+// Reaction routes
+router.post('/:id/reaction', authenticate, addReviewReaction);
+router.delete('/:id/reaction', authenticate, removeReviewReaction);
 
 export default router;

@@ -169,3 +169,86 @@ export const deleteReview = async (req: AuthRequest, res: Response): Promise<voi
     sendError(res, 500, 'Failed to delete review');
   }
 };
+
+// Add/Update reaction to review
+export const addReviewReaction = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { type } = req.body;
+
+    if (!['like', 'love', 'helpful', 'insightful'].includes(type)) {
+      sendError(res, 400, 'Invalid reaction type');
+      return;
+    }
+
+    const review = await Review.findById(id);
+    if (!review) {
+      sendError(res, 404, 'Review not found');
+      return;
+    }
+
+    // Check if user already reacted
+    const existingReactionIndex = (review as any).reactions?.findIndex(
+      (r: any) => r.userId.toString() === req.user!.id
+    );
+
+    if (!review.reactions) {
+      (review as any).reactions = [];
+    }
+
+    if (existingReactionIndex !== undefined && existingReactionIndex > -1) {
+      // Update existing reaction
+      (review as any).reactions[existingReactionIndex].type = type;
+    } else {
+      // Add new reaction
+      (review as any).reactions.push({
+        userId: req.user!.id,
+        type,
+      });
+    }
+
+    await review.save();
+
+    const updatedReview = await Review.findById(id)
+      .populate('userId', 'name email profileImage')
+      .populate('eventId', 'title')
+      .populate('reactions.userId', 'name profileImage');
+
+    sendSuccess(res, 200, 'Reaction added successfully', { review: updatedReview });
+  } catch (error: unknown) {
+    console.error('Add review reaction error:', error);
+    sendError(res, 500, 'Failed to add reaction');
+  }
+};
+
+// Remove reaction from review
+export const removeReviewReaction = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    const review = await Review.findById(id);
+    if (!review) {
+      sendError(res, 404, 'Review not found');
+      return;
+    }
+
+    // Remove user's reaction
+    if ((review as any).reactions) {
+      (review as any).reactions = (review as any).reactions.filter(
+        (r: any) => r.userId.toString() !== req.user!.id
+      );
+    }
+
+    await review.save();
+
+    const updatedReview = await Review.findById(id)
+      .populate('userId', 'name email profileImage')
+      .populate('eventId', 'title')
+      .populate('reactions.userId', 'name profileImage');
+
+    sendSuccess(res, 200, 'Reaction removed successfully', { review: updatedReview });
+  } catch (error: unknown) {
+    console.error('Remove review reaction error:', error);
+    sendError(res, 500, 'Failed to remove reaction');
+  }
+};

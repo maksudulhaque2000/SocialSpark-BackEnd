@@ -53,7 +53,12 @@ export interface IReview {
   eventId: string;
   rating: number;
   comment: string;
+  reactions?: {
+    userId: string;
+    type: 'like' | 'love' | 'helpful' | 'insightful';
+  }[];
   createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface IPayment {

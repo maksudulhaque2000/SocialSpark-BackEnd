@@ -35,6 +35,7 @@ import eventRoutes from './modules/events/event.routes';
 import paymentRoutes from './modules/payments/payment.routes';
 import reviewRoutes from './modules/reviews/review.routes';
 import adminRoutes from './modules/admin/admin.routes';
+import commentRoutes from './modules/comments/comment.routes';
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -43,6 +44,7 @@ app.use('/api/events', eventRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/comments', commentRoutes);
 
 // Error handling
 app.use(notFound);

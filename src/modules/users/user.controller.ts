@@ -177,3 +177,65 @@ export const getTopHosts = async (req: AuthRequest, res: Response): Promise<void
     sendError(res, 500, 'Failed to get top hosts');
   }
 };
+
+// Get host profile with detailed statistics
+export const getHostProfile = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+
+    const user = await User.findById(id).select('-password');
+    if (!user) {
+      sendError(res, 404, 'Host not found');
+      return;
+    }
+
+    // Get host's events
+    const events = await Event.find({ hostId: id })
+      .select('title date status category maxParticipants currentParticipants bannerImage')
+      .sort({ date: -1 });
+
+    // Get reviews (import Review model)
+    const Review = (await import('../reviews/review.model')).default;
+    const reviews = await Review.find({ hostId: id })
+      .populate('userId', 'name profileImage')
+      .populate('eventId', 'title')
+      .sort({ createdAt: -1 });
+
+    // Calculate statistics
+    const totalEvents = events.length;
+    const upcomingEvents = events.filter((e) => e.status === 'upcoming').length;
+    const completedEvents = events.filter((e) => e.status === 'completed').length;
+    const totalParticipants = events.reduce((sum, e) => sum + e.currentParticipants, 0);
+    
+    // Calculate average rating
+    const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+    const averageRating = reviews.length > 0 ? totalRating / reviews.length : 0;
+
+    sendSuccess(res, 200, 'Host profile retrieved successfully', {
+      profile: {
+        id: user._id.toString(),
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        profileImage: user.profileImage,
+        bio: user.bio,
+        interests: user.interests,
+        isVerified: user.isVerified,
+        createdAt: user.createdAt,
+      },
+      statistics: {
+        totalEvents,
+        upcomingEvents,
+        completedEvents,
+        totalParticipants,
+        averageRating: Math.round(averageRating * 10) / 10,
+        totalReviews: reviews.length,
+      },
+      events,
+      reviews,
+    });
+  } catch (error: unknown) {
+    console.error('Get host profile error:', error);
+    sendError(res, 500, 'Failed to get host profile');
+  }
+};
