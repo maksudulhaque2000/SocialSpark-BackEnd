@@ -12,6 +12,12 @@ dotenv.config();
 const app: Application = express();
 const PORT = process.env.PORT || 5000;
 
+// Import payment routes (must be before express.json() for webhook)
+import paymentRoutes from './modules/payments/payment.routes';
+
+// Stripe webhook route MUST come before express.json() middleware
+app.use('/api/payments/webhook', paymentRoutes);
+
 // Middleware
 app.use(cors({
   origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:3000'],
@@ -33,7 +39,7 @@ app.get('/', (req: Request, res: Response) => {
 import authRoutes from './modules/auth/auth.routes';
 import userRoutes from './modules/users/user.routes';
 import eventRoutes from './modules/events/event.routes';
-import paymentRoutes from './modules/payments/payment.routes';
+// paymentRoutes already imported above for webhook
 import reviewRoutes from './modules/reviews/review.routes';
 import adminRoutes from './modules/admin/admin.routes';
 import commentRoutes from './modules/comments/comment.routes';
@@ -44,7 +50,7 @@ import websiteReviewRoutes from './modules/website-reviews/website-review.routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/events', eventRoutes);
-app.use('/api/payments', paymentRoutes);
+app.use('/api/payments', paymentRoutes); // Other payment routes (not webhook)
 app.use('/api/reviews', reviewRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/comments', commentRoutes);

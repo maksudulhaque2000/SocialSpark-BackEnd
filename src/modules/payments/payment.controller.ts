@@ -119,6 +119,59 @@ export const handleWebhook = async (req: AuthRequest, res: Response): Promise<vo
   }
 };
 
+// Confirm payment and join event (for local development without webhook)
+export const confirmPaymentAndJoin = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { paymentIntentId } = req.body;
+
+    if (!paymentIntentId) {
+      sendError(res, 400, 'Payment intent ID is required');
+      return;
+    }
+
+    // Verify payment with Stripe
+    const paymentIntent = await stripe.paymentIntents.retrieve(paymentIntentId);
+
+    if (paymentIntent.status !== 'succeeded') {
+      sendError(res, 400, 'Payment not completed');
+      return;
+    }
+
+    const { eventId, userId } = paymentIntent.metadata;
+
+    // Update payment status
+    await Payment.findOneAndUpdate(
+      { stripePaymentId: paymentIntentId },
+      { status: 'completed' }
+    );
+
+    // Add user to event participants
+    const eventDoc = await Event.findById(eventId);
+    if (!eventDoc) {
+      sendError(res, 404, 'Event not found');
+      return;
+    }
+
+    // Check if user already joined
+    if (eventDoc.participants.includes(userId)) {
+      sendSuccess(res, 200, 'Already joined', { event: eventDoc });
+      return;
+    }
+
+    // Add to participants
+    eventDoc.participants.push(userId);
+    eventDoc.currentParticipants += 1;
+    await eventDoc.save();
+
+    console.log('✅ Payment confirmed and user joined event:', eventId);
+
+    sendSuccess(res, 200, 'Successfully joined event', { event: eventDoc });
+  } catch (error: unknown) {
+    console.error('Confirm payment error:', error);
+    sendError(res, 500, 'Failed to confirm payment');
+  }
+};
+
 // Get user payments
 export const getUserPayments = async (req: AuthRequest, res: Response): Promise<void> => {
   try {

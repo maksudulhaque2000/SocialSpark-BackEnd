@@ -5,6 +5,7 @@ import {
   handleWebhook,
   getUserPayments,
   getHostRevenue,
+  confirmPaymentAndJoin,
 } from './payment.controller';
 import { createPaymentIntentValidation } from './payment.validation';
 import { validate } from '../../middlewares/validation.middleware';
@@ -27,6 +28,8 @@ router.post(
   validate,
   createPaymentIntent
 );
+
+router.post('/confirm-and-join', authenticate, confirmPaymentAndJoin);
 
 router.get('/user/:userId', authenticate, getUserPayments);
 router.get('/host/:hostId/revenue', authenticate, getHostRevenue);
