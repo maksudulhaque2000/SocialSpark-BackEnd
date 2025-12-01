@@ -90,6 +90,14 @@ const eventSchema = new Schema<IEvent>(
         ref: 'User',
       },
     ],
+    isApproved: {
+      type: Boolean,
+      default: true, // Default true for existing events
+    },
+    rejectionReason: {
+      type: String,
+      default: '',
+    },
   },
   {
     timestamps: true,

@@ -40,6 +40,8 @@ export interface IEvent {
   isPaid: boolean;
   status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
   participants: string[];
+  isApproved: boolean;
+  rejectionReason?: string;
   createdAt: Date;
   updatedAt: Date;
 }

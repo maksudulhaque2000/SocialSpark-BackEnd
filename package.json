@@ -8,6 +8,7 @@
     "build": "tsc",
     "start": "node dist/app.js",
     "seed": "ts-node --transpile-only src/utils/seed.ts",
+    "migrate:events": "ts-node --transpile-only src/utils/migrate-events.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

@@ -43,6 +43,7 @@ export const createEvent = async (req: AuthRequest, res: Response): Promise<void
       maxParticipants,
       price: isPaid ? price : 0,
       isPaid: isPaid || false,
+      isApproved: req.user.role === 'Admin', // Auto-approve for Admin
     });
 
     const populatedEvent = await Event.findById(event._id).populate(
@@ -107,6 +108,16 @@ export const getEvents = async (req: AuthRequest, res: Response): Promise<void> 
     } else {
       // By default, show only upcoming events
       filter.status = 'upcoming';
+    }
+
+    // Show all approved events and upcoming events for regular users
+    // Admin can see all events
+    if (req.user?.role !== 'Admin') {
+      filter.isApproved = true;
+    }
+    // If no user is logged in (public access), show only approved events
+    if (!req.user) {
+      filter.isApproved = true;
     }
 
     // Pagination

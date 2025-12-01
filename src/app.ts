@@ -34,6 +34,7 @@ import userRoutes from './modules/users/user.routes';
 import eventRoutes from './modules/events/event.routes';
 import paymentRoutes from './modules/payments/payment.routes';
 import reviewRoutes from './modules/reviews/review.routes';
+import adminRoutes from './modules/admin/admin.routes';
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -41,6 +42,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/payments', paymentRoutes);
 app.use('/api/reviews', reviewRoutes);
+app.use('/api/admin', adminRoutes);
 
 // Error handling
 app.use(notFound);
