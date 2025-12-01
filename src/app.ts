@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/database';
 import { errorHandler, notFound } from './middlewares/error.middleware';
+import { updateEventStatuses } from './utils/event-status.util';
 
 // Load environment variables
 dotenv.config();
@@ -58,6 +59,16 @@ app.use(errorHandler);
 const startServer = async () => {
   try {
     await connectDB();
+    
+    // Update event statuses on startup
+    await updateEventStatuses();
+    console.log('✅ Event statuses updated');
+    
+    // Update event statuses daily at midnight
+    setInterval(async () => {
+      await updateEventStatuses();
+      console.log('✅ Daily event status update completed');
+    }, 24 * 60 * 60 * 1000); // Run every 24 hours
     
     app.listen(PORT, () => {
       console.log(`🚀 Server is running on port ${PORT}`);

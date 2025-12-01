@@ -359,3 +359,40 @@ export const getCategories = async (req: AuthRequest, res: Response): Promise<vo
     sendError(res, 500, 'Failed to get categories');
   }
 };
+
+// Update event status (for host/admin)
+export const updateEventStatus = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { status } = req.body;
+
+    const event = await Event.findById(id);
+    if (!event) {
+      sendError(res, 404, 'Event not found');
+      return;
+    }
+
+    // Check if user is the host or admin
+    if (event.hostId.toString() !== req.user?.id && req.user?.role !== 'Admin') {
+      sendError(res, 403, 'You can only update your own events');
+      return;
+    }
+
+    // Validate status
+    const validStatuses = ['upcoming', 'ongoing', 'completed', 'cancelled'];
+    if (!validStatuses.includes(status)) {
+      sendError(res, 400, 'Invalid status');
+      return;
+    }
+
+    event.status = status;
+    await event.save();
+
+    const updatedEvent = await Event.findById(id).populate('hostId', 'name email profileImage');
+
+    sendSuccess(res, 200, 'Event status updated successfully', { event: updatedEvent });
+  } catch (error: unknown) {
+    console.error('Update event status error:', error);
+    sendError(res, 500, 'Failed to update event status');
+  }
+};
