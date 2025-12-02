@@ -151,7 +151,7 @@ export const getUserHostedEvents = async (req: AuthRequest, res: Response): Prom
 };
 
 // Get top hosts (based on events count and ratings)
-export const getTopHosts = async (req: AuthRequest, res: Response): Promise<void> => {
+export const getTopHosts = async (_req: AuthRequest, res: Response): Promise<void> => {
   try {
     const hosts = await User.find({ role: 'Host', isActive: true })
       .select('name email profileImage bio')

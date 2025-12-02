@@ -40,7 +40,7 @@ export const assignFreePlanToUser = async (userId: string): Promise<void> => {
 };
 
 // Get all subscription plans
-export const getSubscriptionPlans = async (req: AuthRequest, res: Response): Promise<void> => {
+export const getSubscriptionPlans = async (_req: AuthRequest, res: Response): Promise<void> => {
   try {
     const plans = await SubscriptionPlan.find({ isActive: true }).sort({ price: 1 });
     sendSuccess(res, 200, 'Subscription plans retrieved successfully', { plans });

@@ -52,10 +52,10 @@ const eventSchema = new Schema<IEvent>(
       required: [true, 'Event time is required'],
     },
     hostId: {
-      type: Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId as any,
       ref: 'User',
       required: true,
-    },
+    } as any,
     bannerImage: {
       type: String,
       default: '',

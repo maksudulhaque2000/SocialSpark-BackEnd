@@ -244,7 +244,7 @@ export const getHostRevenue = async (req: AuthRequest, res: Response): Promise<v
 
     // Group by event
     const revenueByEvent = payments.reduce((acc: Record<string, unknown>, payment) => {
-      const eventId = payment.eventId._id.toString();
+      const eventId = (payment.eventId as any)._id.toString();
       if (!acc[eventId]) {
         acc[eventId] = {
           event: payment.eventId,

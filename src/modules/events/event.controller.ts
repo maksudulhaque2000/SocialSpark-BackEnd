@@ -92,15 +92,15 @@ export const getEvents = async (req: AuthRequest, res: Response): Promise<void> 
     }
 
     if (dateFrom || dateTo) {
-      filter.date = {};
-      if (dateFrom) filter.date.$gte = new Date(dateFrom as string);
-      if (dateTo) filter.date.$lte = new Date(dateTo as string);
+      filter.date = {} as any;
+      if (dateFrom) (filter.date as any).$gte = new Date(dateFrom as string);
+      if (dateTo) (filter.date as any).$lte = new Date(dateTo as string);
     }
 
     if (minPrice || maxPrice) {
-      filter.price = {};
-      if (minPrice) filter.price.$gte = Number(minPrice);
-      if (maxPrice) filter.price.$lte = Number(maxPrice);
+      filter.price = {} as any;
+      if (minPrice) (filter.price as any).$gte = Number(minPrice);
+      if (maxPrice) (filter.price as any).$lte = Number(maxPrice);
     }
 
     if (status) {
@@ -338,7 +338,7 @@ export const leaveEvent = async (req: AuthRequest, res: Response): Promise<void>
 };
 
 // Get event categories
-export const getCategories = async (req: AuthRequest, res: Response): Promise<void> => {
+export const getCategories = async (_req: AuthRequest, res: Response): Promise<void> => {
   try {
     const categories = [
       'Concerts',

@@ -6,6 +6,7 @@ export interface AuthRequest extends Request {
     email: string;
     role: 'User' | 'Host' | 'Admin';
   };
+  file?: Express.Multer.File;
 }
 
 export interface IUser {

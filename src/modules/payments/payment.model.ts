@@ -4,15 +4,15 @@ import { IPayment } from '../../types';
 const paymentSchema = new Schema<IPayment>(
   {
     userId: {
-      type: Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId as any,
       ref: 'User',
       required: true,
-    },
+    } as any,
     eventId: {
-      type: Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId as any,
       ref: 'Event',
       required: true,
-    },
+    } as any,
     amount: {
       type: Number,
       required: [true, 'Amount is required'],

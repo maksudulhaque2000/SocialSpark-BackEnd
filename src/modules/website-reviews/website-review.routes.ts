@@ -26,10 +26,10 @@ router.post(
 );
 
 // Admin only routes
-router.get('/all', authenticate, authorize(['Admin']), getAllReviews);
-router.get('/pending', authenticate, authorize(['Admin']), getPendingReviews);
-router.patch('/:id/approve', authenticate, authorize(['Admin']), approveReview);
-router.patch('/:id/reject', authenticate, authorize(['Admin']), rejectReview);
-router.delete('/:id', authenticate, authorize(['Admin']), deleteReview);
+router.get('/all', authenticate, authorize('Admin'), getAllReviews);
+router.get('/pending', authenticate, authorize('Admin'), getPendingReviews);
+router.patch('/:id/approve', authenticate, authorize('Admin'), approveReview);
+router.patch('/:id/reject', authenticate, authorize('Admin'), rejectReview);
+router.delete('/:id', authenticate, authorize('Admin'), deleteReview);
 
 export default router;

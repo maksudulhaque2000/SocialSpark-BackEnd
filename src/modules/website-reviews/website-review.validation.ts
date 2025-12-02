@@ -13,7 +13,7 @@ export const createWebsiteReviewSchema = z.object({
 
 export const updateReviewStatusSchema = z.object({
   status: z.enum(['approved', 'rejected'], {
-    errorMap: () => ({ message: 'Status must be either approved or rejected' }),
+    message: 'Status must be either approved or rejected',
   }),
 });
 

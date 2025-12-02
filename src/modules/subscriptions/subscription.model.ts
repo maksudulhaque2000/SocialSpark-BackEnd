@@ -71,15 +71,15 @@ const subscriptionPlanSchema = new Schema<ISubscriptionPlan>(
 const userSubscriptionSchema = new Schema<IUserSubscription>(
   {
     userId: {
-      type: Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId as any,
       ref: 'User',
       required: true,
-    },
+    } as any,
     planId: {
-      type: Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId as any,
       ref: 'SubscriptionPlan',
       required: true,
-    },
+    } as any,
     status: {
       type: String,
       enum: ['active', 'expired', 'cancelled'],

@@ -336,7 +336,7 @@ export const forceDeleteEvent = async (req: AuthRequest, res: Response): Promise
 // ============= DASHBOARD STATISTICS =============
 
 // Get admin dashboard statistics
-export const getDashboardStats = async (req: AuthRequest, res: Response): Promise<void> => {
+export const getDashboardStats = async (_req: AuthRequest, res: Response): Promise<void> => {
   try {
     // Total counts
     const totalUsers = await User.countDocuments();

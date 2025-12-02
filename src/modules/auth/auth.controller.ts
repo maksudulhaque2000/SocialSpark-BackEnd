@@ -120,7 +120,7 @@ export const login = async (req: AuthRequest, res: Response): Promise<void> => {
 // Social login (Google/Facebook)
 export const socialLogin = async (req: AuthRequest, res: Response): Promise<void> => {
   try {
-    const { name, email, profileImage, provider } = req.body;
+    const { name, email, profileImage, provider: _provider } = req.body;
 
     // Find or create user
     let user = await User.findOne({ email });

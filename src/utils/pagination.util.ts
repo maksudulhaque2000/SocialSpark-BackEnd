@@ -25,7 +25,7 @@ export const getPaginationParams = (options: PaginationOptions) => {
     page,
     limit,
     skip,
-    sort: { [sortBy]: sortOrder },
+    sort: { [sortBy]: sortOrder } as Record<string, 1 | -1>,
   };
 };
 
