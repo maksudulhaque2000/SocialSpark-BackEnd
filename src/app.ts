@@ -46,6 +46,8 @@ import commentRoutes from './modules/comments/comment.routes';
 import statsRoutes from './modules/stats/stats.routes';
 import websiteReviewRoutes from './modules/website-reviews/website-review.routes';
 import subscriptionRoutes from './modules/subscriptions/subscription.routes';
+import conversationRoutes from './modules/conversations/conversation.routes';
+import messageRoutes from './modules/messages/message.routes';
 
 // API Routes
 app.use('/api/auth', authRoutes);
@@ -58,6 +60,8 @@ app.use('/api/comments', commentRoutes);
 app.use('/api/stats', statsRoutes);
 app.use('/api/website-reviews', websiteReviewRoutes);
 app.use('/api/subscriptions', subscriptionRoutes);
+app.use('/api/conversations', conversationRoutes);
+app.use('/api/messages', messageRoutes);
 
 // Error handling
 app.use(notFound);

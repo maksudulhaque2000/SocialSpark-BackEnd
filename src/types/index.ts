@@ -84,7 +84,30 @@ export interface IWebsiteReview {
   updatedAt: Date;
 }
 
+export interface IConversation {
+  _id: string;
+  participants: string[];
+  status: 'pending' | 'accepted' | 'rejected';
+  requestedBy: string;
+  requestedTo: string;
+  lastMessageAt?: Date;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+export interface IMessage {
+  _id: string;
+  conversationId: string;
+  senderId: string;
+  receiverId: string;
+  content: string;
+  isRead: boolean;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 export type UserRole = 'User' | 'Host' | 'Admin';
 export type EventStatus = 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
 export type PaymentStatus = 'pending' | 'completed' | 'failed';
 export type ReviewStatus = 'pending' | 'approved' | 'rejected';
+export type ConversationStatus = 'pending' | 'accepted' | 'rejected';
