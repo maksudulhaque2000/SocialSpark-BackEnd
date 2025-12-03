@@ -61,6 +61,6 @@ export const socialLoginValidation = [
   body('provider')
     .notEmpty()
     .withMessage('Provider is required')
-    .isIn(['google', 'facebook'])
+    .isIn(['google', 'github'])
     .withMessage('Invalid provider'),
 ];
