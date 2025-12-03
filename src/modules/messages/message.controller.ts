@@ -1,5 +1,4 @@
 import { Response } from 'express';
-import mongoose from 'mongoose';
 import { AuthRequest } from '../../types';
 import Message from './message.model';
 import Conversation from '../conversations/conversation.model';
