@@ -198,7 +198,6 @@ NODE_ENV=development
 
 # Database
 DATABASE_URL=mongodb://localhost:27017/socialspark
-# Or MongoDB Atlas: mongodb+srv://username:password@cluster.mongodb.net/socialspark
 
 # JWT
 JWT_SECRET=your_super_secret_jwt_key_here
