@@ -1,6 +1,10 @@
 # 🌟 SocialSpark Backend API
 
 <div align="center">
+  <img src="./src/public/server.png" height="400" width="800" alt="SocialSpark"/>
+</div>
+
+<div align="center">
 
 ![SocialSpark Logo](https://img.shields.io/badge/SocialSpark-Backend-blue?style=for-the-badge)
 ![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)
